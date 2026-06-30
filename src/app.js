@@ -5,8 +5,6 @@ const morgan = require('morgan');
 const corsOptions = require('./config/cors');
 const rateLimiter = require('./config/rate-limit');
 
-const setupAssociations = require('../database/associations');
-
 const userRoutes = require('./modules/users/user.routes');
 const authRoutes = require('./modules/auth/auth.routes');
 const taskRoutes = require('./modules/task/task.routes');
@@ -30,9 +28,6 @@ app.use('/api/', rateLimiter);
 app.use(express.json());
 
 app.use(cors(corsOptions));
-
-// 🔗 inicializar relaciones (CRÍTICO)
-setupAssociations();
 
 // routes
 app.use('/api', userRoutes);
