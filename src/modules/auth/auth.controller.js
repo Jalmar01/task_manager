@@ -1,4 +1,25 @@
 const authService = require('./auth.service');
+const userService = require('../users/user.service');
+
+async function register(req, res) {
+    try {
+        const user = await userService.createUser({
+            ...req.body,
+            provider: 'local'
+        });
+        const userWithoutPassword = user.toJSON();
+        delete userWithoutPassword.password;
+
+        return res.status(201).json({
+            message: 'User registered successfully',
+            data: userWithoutPassword
+        });
+    } catch (error) {
+        return res.status(400).json({
+            error: error.message
+        });
+    }
+}
 
 async function login(req, res)  {
     try {
@@ -31,6 +52,7 @@ async function me (req, res) {
 
 
 module.exports= { 
+    register,
     login,
     me 
 };

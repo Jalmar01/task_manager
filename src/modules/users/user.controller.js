@@ -4,7 +4,7 @@ async function createUser(req, res) {
     try{
         const user = await userService.createUser(req.body);
 
-        const userWithoutPassword = user.json();
+        const userWithoutPassword = user.toJSON();
         delete userWithoutPassword.password;
 
             return res.status(201).json({

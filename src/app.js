@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const corsOptions = require('./config/cors');
 
 const setupAssociations = require('../database/associations');
 
@@ -11,16 +12,10 @@ const app = express();
 
 app.disable('x-powered-by');
 
-// middlewore para leer json
+// middleware para leer json
 app.use(express.json());
 
-
-app.use(
-    cors({
-        origin: process.env.CLIENT_URL,
-        credentials: true
-    })
-);
+app.use(cors(corsOptions));
 
 // 🔗 inicializar relaciones (CRÍTICO)
 setupAssociations();
@@ -29,5 +24,19 @@ setupAssociations();
 app.use('/api', userRoutes);
 app.use('/api/auth', authRoutes)
 app.use('/api/tasks', taskRoutes)
+
+// 🛡️ global error handler
+app.use((err, req, res, next) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || 'Internal server error';
+
+    if (process.env.NODE_ENV !== 'production') {
+        console.error('❌ Error:', err);
+    }
+
+    return res.status(status).json({
+        error: message
+    });
+});
 
 module.exports = app;
