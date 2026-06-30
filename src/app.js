@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const corsOptions = require('./config/cors');
+const rateLimiter = require('./config/rate-limit');
 
 const setupAssociations = require('../database/associations');
 
@@ -11,6 +14,17 @@ const taskRoutes = require('./modules/task/task.routes');
 const app = express();
 
 app.disable('x-powered-by');
+
+// seguridad
+app.use(helmet());
+
+// logging (solo en desarrollo)
+if (process.env.NODE_ENV !== 'production') {
+    app.use(morgan('dev'));
+}
+
+// rate limiting
+app.use('/api/', rateLimiter);
 
 // middleware para leer json
 app.use(express.json());
