@@ -12,5 +12,4 @@ router.post('/login', validate(loginSchema), authController.login);
 // ruta protegida de prueba
 router.get('/me', authMiddleware, authController.me);
 
-
 module.exports = router;

@@ -1,8 +1,6 @@
-const { z } = require('zod');
-
 /**
  * Middleware de validación genérico usando Zod.
- * @param {z.ZodSchema} schema - Schema de Zod para validar req.body
+ * @param {import('zod').ZodSchema} schema - Schema de Zod para validar req.body
  * @returns {Function} Middleware de Express
  */
 function validate(schema) {

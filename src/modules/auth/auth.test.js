@@ -24,9 +24,7 @@ describe('Auth API', () => {
 
     describe('POST /api/auth/login', () => {
         it('should return 400 when email is missing', async () => {
-            const res = await request(app)
-                .post('/api/auth/login')
-                .send({ password: '123456' });
+            const res = await request(app).post('/api/auth/login').send({ password: '123456' });
 
             expect(res.status).toBe(400);
             expect(res.body).toHaveProperty('error', 'Validation failed');

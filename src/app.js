@@ -31,11 +31,11 @@ app.use(cors(corsOptions));
 
 // routes
 app.use('/api', userRoutes);
-app.use('/api/auth', authRoutes)
-app.use('/api/tasks', taskRoutes)
+app.use('/api/auth', authRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // 🛡️ global error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || 'Internal server error';
 

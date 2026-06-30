@@ -1,7 +1,7 @@
 const taskService = require('./task.service');
 
 async function createTask(req, res) {
-    try{
+    try {
         const task = await taskService.createTask({
             title: req.body.title,
             description: req.body.description,
@@ -12,85 +12,71 @@ async function createTask(req, res) {
             message: 'Task created',
             data: task
         });
-    }catch(error){
+    } catch (error) {
         return res.status(400).json({
-            message:error.message
+            message: error.message
         });
-    };
-};
+    }
+}
 
 async function getTasks(req, res) {
-    try{
+    try {
         const tasks = await taskService.getTasks(req.user.id);
 
-         return res.status(200).json({
+        return res.status(200).json({
             message: 'Tasks fetched',
             data: tasks
-         });
-
-    }catch(error){
+        });
+    } catch (error) {
         return res.status(500).json({
             message: error.message
         });
-    };
-};
+    }
+}
 
 async function getTaskById(req, res) {
-    try{
-        const task = await taskService.getTaskById(
-            req.params.id,
-            req.user.id
-        );
+    try {
+        const task = await taskService.getTaskById(req.params.id, req.user.id);
 
         return res.status(200).json({
-            message:'Task fetched',
+            message: 'Task fetched',
             data: task
         });
-
-    }catch(error){
+    } catch (error) {
         return res.status(404).json({
             message: error.message
         });
-    };
-};
+    }
+}
 
 async function updateTask(req, res) {
-    try{
-        const task = await taskService.updateTask(
-            req.params.id,
-            req.user.id,
-            req.body
-        );
+    try {
+        const task = await taskService.updateTask(req.params.id, req.user.id, req.body);
 
         return res.status(200).json({
-            message:'Task updated',
-            data:task
+            message: 'Task updated',
+            data: task
         });
-
-    }catch(error){
+    } catch (error) {
         return res.status(400).json({
             message: error.message
         });
-    };  
-};
+    }
+}
 
 async function deleteTask(req, res) {
-    try{
-        const task = await taskService.deleteTask(
-            req.params.id,
-            req.user.id
-        );
+    try {
+        await taskService.deleteTask(req.params.id, req.user.id);
 
         return res.status(200).json({
-            message:'Task deleted successfully',
+            message: 'Task deleted successfully'
         });
-
-    }catch(error){
+    } catch (error) {
         return res.status(400).json({
             message: error.message
         });
-    };
-};
+    }
+}
 
 module.exports = {
     createTask,
