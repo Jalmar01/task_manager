@@ -6,7 +6,7 @@ context: |
   Architecture: Layered (Routes -> Controller -> Service -> Model), domain-based modules (auth, users, task)
   Database: MySQL via Sequelize 6, UUID primary keys, migrations via sequelize-cli
   Auth: JWT-based with bcrypt password hashing, supports local and social (provider field) login
-  Conventions: CommonJS, no TypeScript, no linter, no formatter, no test runner yet
+  Conventions: CommonJS, no TypeScript, no linter, no formatter, Jest + Supertest for testing
 
 rules:
   proposal:
@@ -31,24 +31,25 @@ rules:
   archive:
     - Warn before merging destructive deltas
 
-testing:
-  strict_tdd: false
-  test_runner:
-    available: false
-    reason: No test runner installed. package.json test script returns placeholder error.
-  layers:
-    unit:
-      available: false
-      tool: "-"
-    integration:
-      available: false
-      tool: "-"
-    e2e:
-      available: false
-      tool: "-"
-  coverage:
-    available: false
-    command: "-"
+  testing:
+    strict_tdd: false
+    test_runner:
+      available: true
+      framework: Jest 29 + Supertest
+      command: npm test
+    layers:
+      unit:
+        available: true
+        tool: Jest
+      integration:
+        available: true
+        tool: Supertest
+      e2e:
+        available: false
+        tool: "-"
+    coverage:
+      available: true
+      command: npm run test:coverage"
   quality:
     linter:
       available: false
