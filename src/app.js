@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const corsOptions = require('./config/cors');
 const rateLimiter = require('./config/rate-limit');
+const { serveUi, setupUi } = require('./config/swagger');
 
 const userRoutes = require('./modules/users/user.routes');
 const authRoutes = require('./modules/auth/auth.routes');
@@ -33,6 +34,9 @@ app.use(cors(corsOptions));
 app.use('/api', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
+
+// documentación interactiva
+app.use('/api-docs', serveUi, setupUi);
 
 // 🛡️ global error handler
 app.use((err, req, res, _next) => {
