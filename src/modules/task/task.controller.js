@@ -21,11 +21,18 @@ async function createTask(req, res) {
 
 async function getTasks(req, res) {
     try {
-        const tasks = await taskService.getTasks(req.user.id);
+        const { page, limit } = req.query;
+        const { rows, count } = await taskService.getTasks(req.user.id, page, limit);
 
         return res.status(200).json({
             message: 'Tasks fetched',
-            data: tasks
+            data: rows,
+            meta: {
+                page,
+                limit,
+                total: count,
+                totalPages: Math.ceil(count / limit)
+            }
         });
     } catch (error) {
         return res.status(500).json({

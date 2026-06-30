@@ -3,7 +3,7 @@ const express = require('express');
 const taskController = require('./task.controller');
 const authMiddleware = require('../../middlewares/auth.middleware');
 const validate = require('../../middlewares/validate');
-const { createTaskSchema, updateTaskSchema } = require('./task.validation');
+const { createTaskSchema, updateTaskSchema, getTasksSchema } = require('./task.validation');
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.post('/', validate(createTaskSchema), taskController.createTask);
-router.get('/', taskController.getTasks);
+router.get('/', validate(getTasksSchema, 'query'), taskController.getTasks);
 router.get('/:id', taskController.getTaskById);
 router.put('/:id', validate(updateTaskSchema), taskController.updateTask);
 router.patch('/:id', taskController.updateTask);

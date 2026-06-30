@@ -9,10 +9,15 @@ async function createTask({ title, description, userId }) {
     return task;
 }
 
-async function getTasks(userId) {
-    return await Task.findAll({
-        where: { userId }
+async function getTasks(userId, page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const { rows, count } = await Task.findAndCountAll({
+        where: { userId },
+        offset,
+        limit,
+        order: [['createdAt', 'DESC']]
     });
+    return { rows, count };
 }
 
 async function getTaskById(id, userId) {
