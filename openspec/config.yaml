@@ -1,0 +1,61 @@
+# openspec/config.yaml
+schema: spec-driven
+
+context: |
+  Tech stack: Node.js (CommonJS), Express 5, Sequelize 6 + MySQL, JWT + bcrypt, Zod 4, dotenv
+  Architecture: Layered (Routes -> Controller -> Service -> Model), domain-based modules (auth, users, task)
+  Database: MySQL via Sequelize 6, UUID primary keys, migrations via sequelize-cli
+  Auth: JWT-based with bcrypt password hashing, supports local and social (provider field) login
+  Conventions: CommonJS, no TypeScript, no linter, no formatter, no test runner yet
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing code patterns (CommonJS, layered modules)
+    tdd: false
+    test_command: ""
+  verify:
+    test_command: ""
+    build_command: ""
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+
+testing:
+  strict_tdd: false
+  test_runner:
+    available: false
+    reason: No test runner installed. package.json test script returns placeholder error.
+  layers:
+    unit:
+      available: false
+      tool: "-"
+    integration:
+      available: false
+      tool: "-"
+    e2e:
+      available: false
+      tool: "-"
+  coverage:
+    available: false
+    command: "-"
+  quality:
+    linter:
+      available: false
+      command: "-"
+    type_checker:
+      available: false
+      command: "-"
+    formatter:
+      available: false
+      command: "-"
