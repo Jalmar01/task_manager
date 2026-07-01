@@ -74,7 +74,7 @@ describe('Auth API', () => {
             const res = await request(app).get('/api/auth/me');
 
             expect(res.status).toBe(401);
-            expect(res.body).toHaveProperty('message', 'No token provided');
+            expect(res.body).toHaveProperty('error', 'No token provided');
         });
 
         it('should return 401 with invalid token', async () => {
@@ -83,7 +83,7 @@ describe('Auth API', () => {
                 .set('Authorization', 'Bearer invalid-token-here');
 
             expect(res.status).toBe(401);
-            expect(res.body).toHaveProperty('message', 'Invalid or expired token');
+            expect(res.body).toHaveProperty('error', 'Invalid or expired token');
         });
 
         it('should return 401 with malformed authorization header', async () => {
@@ -92,7 +92,7 @@ describe('Auth API', () => {
                 .set('Authorization', 'InvalidFormat');
 
             expect(res.status).toBe(401);
-            expect(res.body).toHaveProperty('message', 'Invalid token format');
+            expect(res.body).toHaveProperty('error', 'Invalid token format');
         });
     });
 });

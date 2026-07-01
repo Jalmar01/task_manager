@@ -5,7 +5,7 @@ function authMiddleware(req, res, next) {
 
     if (!authHeader) {
         return res.status(401).json({
-            message: 'No token provided'
+            error: 'No token provided'
         });
     }
 
@@ -13,7 +13,7 @@ function authMiddleware(req, res, next) {
 
     if (!token) {
         return res.status(401).json({
-            message: 'Invalid token format'
+            error: 'Invalid token format'
         });
     }
 
@@ -25,7 +25,7 @@ function authMiddleware(req, res, next) {
         next();
     } catch (error) {
         return res.status(401).json({
-            message: 'Invalid or expired token'
+            error: 'Invalid or expired token'
         });
     }
 }

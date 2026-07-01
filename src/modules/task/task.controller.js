@@ -14,7 +14,7 @@ async function createTask(req, res) {
         });
     } catch (error) {
         return res.status(400).json({
-            message: error.message
+            error: error.message
         });
     }
 }
@@ -36,7 +36,7 @@ async function getTasks(req, res) {
         });
     } catch (error) {
         return res.status(500).json({
-            message: error.message
+            error: error.message
         });
     }
 }
@@ -51,7 +51,7 @@ async function getTaskById(req, res) {
         });
     } catch (error) {
         return res.status(404).json({
-            message: error.message
+            error: error.message
         });
     }
 }
@@ -66,7 +66,7 @@ async function updateTask(req, res) {
         });
     } catch (error) {
         return res.status(400).json({
-            message: error.message
+            error: error.message
         });
     }
 }
@@ -80,7 +80,7 @@ async function deleteTask(req, res) {
         });
     } catch (error) {
         return res.status(400).json({
-            message: error.message
+            error: error.message
         });
     }
 }

@@ -11,7 +11,7 @@ const Task = sequelize.define(
             allowNull: false
         },
         title: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(100),
             allowNull: false
         },
         description: {

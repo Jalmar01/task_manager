@@ -32,10 +32,20 @@ const apiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid' },
-          title: { type: 'string', maxLength: 200 },
+          title: { type: 'string', maxLength: 100 },
           description: { type: 'string' },
           completed: { type: 'boolean' },
           userId: { type: 'string', format: 'uuid' },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' },
+        },
+      },
+      User: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          name: { type: 'string' },
+          email: { type: 'string', format: 'email' },
           createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
         },
@@ -62,36 +72,31 @@ const apiSpec = {
             'application/json': {
               schema: {
                 type: 'object',
-                required: ['email', 'password'],
+                required: ['email', 'password', 'name'],
                 properties: {
                   email: { type: 'string', format: 'email' },
-                  password: { type: 'string', minLength: 8 },
+                  password: { type: 'string', minLength: 6 },
+                  name: { type: 'string' },
                 },
               },
             },
           },
         },
         responses: {
-          201: {
-            description: 'User registered and token returned',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    token: { type: 'string' },
-                    user: {
-                      type: 'object',
-                      properties: {
-                        id: { type: 'string', format: 'uuid' },
-                        email: { type: 'string', format: 'email' },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
+           201: {
+             description: 'User registered successfully',
+             content: {
+               'application/json': {
+                 schema: {
+                   type: 'object',
+                   properties: {
+                     message: { type: 'string' },
+                     data: { $ref: '#/components/schemas/User' },
+                   },
+                 },
+               },
+             },
+           },
           400: { description: 'Validation error' },
         },
       },
@@ -117,25 +122,24 @@ const apiSpec = {
         },
         responses: {
           200: {
-            description: 'Login successful',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    token: { type: 'string' },
-                    user: {
-                      type: 'object',
-                      properties: {
-                        id: { type: 'string', format: 'uuid' },
-                        email: { type: 'string', format: 'email' },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
+             description: 'Login successful',
+             content: {
+               'application/json': {
+                 schema: {
+                   type: 'object',
+                   properties: {
+                     message: { type: 'string' },
+                     data: {
+                       type: 'object',
+                       properties: {
+                         token: { type: 'string' },
+                       },
+                     },
+                   },
+                 },
+               },
+             },
+           },
           401: { description: 'Invalid credentials' },
         },
       },
@@ -187,19 +191,19 @@ const apiSpec = {
         },
         responses: {
           201: {
-            description: 'User created',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    email: { type: 'string', format: 'email' },
-                  },
-                },
-              },
-            },
-          },
+             description: 'User created',
+             content: {
+               'application/json': {
+                 schema: {
+                   type: 'object',
+                   properties: {
+                     message: { type: 'string' },
+                     data: { $ref: '#/components/schemas/User' },
+                   },
+                 },
+               },
+             },
+           },
           400: { description: 'Validation error' },
           401: { description: 'No token provided' },
         },
@@ -245,7 +249,7 @@ const apiSpec = {
                 type: 'object',
                 required: ['title'],
                 properties: {
-                  title: { type: 'string', maxLength: 200 },
+                  title: { type: 'string', maxLength: 100 },
                   description: { type: 'string' },
                 },
               },
@@ -287,9 +291,9 @@ const apiSpec = {
           404: { description: 'Task not found' },
         },
       },
-      put: {
+      patch: {
         tags: ['Tasks'],
-        summary: 'Update a task',
+        summary: 'Update a task (partial)',
         security: [{ bearerAuth: [] }],
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } },
@@ -301,7 +305,7 @@ const apiSpec = {
               schema: {
                 type: 'object',
                 properties: {
-                  title: { type: 'string', maxLength: 200 },
+                  title: { type: 'string', maxLength: 100 },
                   description: { type: 'string' },
                   completed: { type: 'boolean' },
                 },

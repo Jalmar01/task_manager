@@ -35,7 +35,7 @@ describe('Tasks API', () => {
                 .send({ title: 'Test task' });
 
             expect(res.status).toBe(401);
-            expect(res.body).toHaveProperty('message', 'No token provided');
+            expect(res.body).toHaveProperty('error', 'No token provided');
         });
 
         it('should return 400 when title is missing', async () => {
@@ -59,19 +59,19 @@ describe('Tasks API', () => {
         });
     });
 
-    describe('PUT /api/tasks/:id', () => {
+    describe('PATCH /api/tasks/:id', () => {
         it('should return 401 without token', async () => {
             const res = await request(app)
-                .put('/api/tasks/1')
+                .patch('/api/tasks/1')
                 .send({ title: 'Updated' });
 
             expect(res.status).toBe(401);
-            expect(res.body).toHaveProperty('message', 'No token provided');
+            expect(res.body).toHaveProperty('error', 'No token provided');
         });
 
         it('should return 400 when no fields provided', async () => {
             const res = await request(app)
-                .put('/api/tasks/1')
+                .patch('/api/tasks/1')
                 .set('Authorization', `Bearer ${validToken}`)
                 .send({});
 
@@ -85,7 +85,7 @@ describe('Tasks API', () => {
             const res = await request(app).get('/api/tasks');
 
             expect(res.status).toBe(401);
-            expect(res.body).toHaveProperty('message', 'No token provided');
+            expect(res.body).toHaveProperty('error', 'No token provided');
         });
     });
 
@@ -94,7 +94,7 @@ describe('Tasks API', () => {
             const res = await request(app).delete('/api/tasks/1');
 
             expect(res.status).toBe(401);
-            expect(res.body).toHaveProperty('message', 'No token provided');
+            expect(res.body).toHaveProperty('error', 'No token provided');
         });
     });
 

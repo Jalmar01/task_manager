@@ -30,7 +30,7 @@ async function login(req, res) {
         });
     } catch (error) {
         return res.status(401).json({
-            message: error.message
+            error: error.message
         });
     }
 }
@@ -43,7 +43,7 @@ async function me(req, res) {
         });
     } catch (error) {
         return res.status(404).json({
-            message: error.message
+            error: error.message
         });
     }
 }
