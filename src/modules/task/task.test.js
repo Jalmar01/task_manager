@@ -126,7 +126,7 @@ describe('Tasks API', () => {
         });
 
         afterAll(async () => {
-            await Task.destroy({ where: { userId: TEST_USER_ID } });
+            await Task.destroy({ where: { userId: TEST_USER_ID }, force: true });
             await User.destroy({ where: { id: TEST_USER_ID } });
         });
 

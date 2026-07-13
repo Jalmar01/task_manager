@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const morgan = require('morgan');
+const pinoHttp = require('pino-http');
+const logger = require('./config/logger');
 const corsOptions = require('./config/cors');
 const rateLimiter = require('./config/rate-limit');
 const { serveUi, setupUi } = require('./config/swagger');
@@ -22,10 +23,11 @@ app.use(requestId);
 // seguridad
 app.use(helmet());
 
-// logging (solo en desarrollo)
-if (process.env.NODE_ENV !== 'production') {
-    app.use(morgan('dev'));
-}
+// logging estructurado
+app.use(pinoHttp({
+    logger,
+    genReqId: (req) => req.requestId
+}));
 
 // rate limiting
 app.use('/api/', rateLimiter);
