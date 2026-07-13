@@ -122,25 +122,93 @@ const apiSpec = {
         },
         responses: {
           200: {
-             description: 'Login successful',
-             content: {
-               'application/json': {
-                 schema: {
-                   type: 'object',
-                   properties: {
-                     message: { type: 'string' },
-                     data: {
-                       type: 'object',
-                       properties: {
-                         token: { type: 'string' },
-                       },
-                     },
-                   },
-                 },
-               },
-             },
-           },
+              description: 'Login successful',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string' },
+                      data: {
+                        type: 'object',
+                        properties: {
+                          accessToken: { type: 'string' },
+                          refreshToken: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           401: { description: 'Invalid credentials' },
+        },
+      },
+    },
+    '/api/auth/refresh': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Refresh access token using a refresh token',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['refreshToken'],
+                properties: {
+                  refreshToken: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Tokens refreshed',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: { type: 'string' },
+                    data: {
+                      type: 'object',
+                      properties: {
+                        accessToken: { type: 'string' },
+                        refreshToken: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: { description: 'Invalid or expired refresh token' },
+        },
+      },
+    },
+    '/api/auth/logout': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Logout by revoking a refresh token',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['refreshToken'],
+                properties: {
+                  refreshToken: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Logged out successfully' },
+          400: { description: 'Bad request' },
         },
       },
     },

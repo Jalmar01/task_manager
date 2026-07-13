@@ -1,6 +1,31 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const User = require('../users/user.model');
+const RefreshToken = require('./refresh-token.model');
+
+const ACCESS_TOKEN_EXPIRY = '15m';
+const REFRESH_TOKEN_DAYS = 7;
+
+function hashToken(token) {
+    return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+function generateRefreshToken() {
+    return crypto.randomBytes(40).toString('hex');
+}
+
+async function saveRefreshToken(userId, token) {
+    const hashed = hashToken(token);
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_DAYS);
+
+    await RefreshToken.create({
+        token: hashed,
+        userId,
+        expiresAt
+    });
+}
 
 async function login({ email, password }) {
     const user = await User.findOne({ where: { email } });
@@ -13,15 +38,61 @@ async function login({ email, password }) {
         throw new Error('Invalid credentials');
     }
 
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
         {
             id: user.id,
             email: user.email
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1d' }
+        { expiresIn: ACCESS_TOKEN_EXPIRY }
     );
-    return { token };
+
+    const refreshToken = generateRefreshToken();
+    await saveRefreshToken(user.id, refreshToken);
+
+    return { accessToken, refreshToken };
+}
+
+async function refreshAccessToken(refreshToken) {
+    const hashed = hashToken(refreshToken);
+    const record = await RefreshToken.findOne({
+        where: {
+            token: hashed,
+            expiresAt: { [require('sequelize').Op.gt]: new Date() }
+        }
+    });
+
+    if (!record) {
+        throw new Error('Invalid or expired refresh token');
+    }
+
+    // Delete the old refresh token (rotation)
+    await record.destroy();
+
+    // Get user and issue new tokens
+    const user = await User.findByPk(record.userId);
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    const newAccessToken = jwt.sign(
+        {
+            id: user.id,
+            email: user.email
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: ACCESS_TOKEN_EXPIRY }
+    );
+
+    const newRefreshToken = generateRefreshToken();
+    await saveRefreshToken(user.id, newRefreshToken);
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+}
+
+async function logout(refreshToken) {
+    const hashed = hashToken(refreshToken);
+    await RefreshToken.destroy({ where: { token: hashed } });
 }
 
 async function getMe(userId) {
@@ -36,4 +107,4 @@ async function getMe(userId) {
     return userWithoutPassword;
 }
 
-module.exports = { login, getMe };
+module.exports = { login, getMe, refreshAccessToken, logout };

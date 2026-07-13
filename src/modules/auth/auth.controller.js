@@ -48,8 +48,37 @@ async function me(req, res) {
     }
 }
 
+async function refresh(req, res) {
+    try {
+        const result = await authService.refreshAccessToken(req.body.refreshToken);
+        return res.status(200).json({
+            message: 'Tokens refreshed',
+            data: result
+        });
+    } catch (error) {
+        return res.status(401).json({
+            error: error.message
+        });
+    }
+}
+
+async function logout(req, res) {
+    try {
+        await authService.logout(req.body.refreshToken);
+        return res.status(200).json({
+            message: 'Logged out successfully'
+        });
+    } catch (error) {
+        return res.status(400).json({
+            error: error.message
+        });
+    }
+}
+
 module.exports = {
     register,
     login,
-    me
+    me,
+    refresh,
+    logout
 };
