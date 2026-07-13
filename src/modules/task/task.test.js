@@ -165,13 +165,13 @@ describe('Tasks API', () => {
             expect(returnedIds).toEqual(expectedIds);
         });
 
-        it('should reject limit exceeding 100', async () => {
+        it('should cap limit at 100 when exceeding max', async () => {
             const res = await request(app)
                 .get('/api/tasks?limit=200')
                 .set('Authorization', `Bearer ${validToken}`);
 
-            expect(res.status).toBe(400);
-            expect(res.body).toHaveProperty('error', 'Validation failed');
+            expect(res.status).toBe(200);
+            expect(res.body.meta.limit).toBe(100);
         });
 
         it('should return empty array when page exceeds total pages', async () => {
