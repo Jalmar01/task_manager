@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_DATABASE:-task_manager}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_DATABASE: ${DB_DATABASE:-task_manager}
+      DB_DIALECT: mysql
+      JWT_SECRET: ${JWT_SECRET:-supersecretkey123}
+      PORT: 3000
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:5173}
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "npx sequelize-cli db:migrate && node src/server.js"
+
+volumes:
+  mysql_data:

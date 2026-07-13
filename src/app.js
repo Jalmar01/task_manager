@@ -5,14 +5,19 @@ const morgan = require('morgan');
 const corsOptions = require('./config/cors');
 const rateLimiter = require('./config/rate-limit');
 const { serveUi, setupUi } = require('./config/swagger');
+const requestId = require('./middlewares/request-id');
 
 const userRoutes = require('./modules/users/user.routes');
 const authRoutes = require('./modules/auth/auth.routes');
 const taskRoutes = require('./modules/task/task.routes');
+const healthRoutes = require('./modules/health/health.routes');
 
 const app = express();
 
 app.disable('x-powered-by');
+
+// request id — first to capture every request
+app.use(requestId);
 
 // seguridad
 app.use(helmet());
@@ -34,6 +39,7 @@ app.use(cors(corsOptions));
 app.use('/api', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/health', healthRoutes);
 
 // documentación interactiva
 app.use('/api-docs', serveUi, setupUi);
